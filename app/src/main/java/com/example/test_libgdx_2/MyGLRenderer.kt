@@ -6,13 +6,15 @@ import javax.microedition.khronos.opengles.GL10
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import android.os.SystemClock
 import android.util.Log
+import com.example.test_libgdx_2.model.LinedSquareGDX
+import com.example.test_libgdx_2.model.TriangleGDX
 
-class MyGLRenderer : GLSurfaceView.Renderer {
+class MyGLRenderer() : GLSurfaceView.Renderer {
+    var shape: Int = 0
 
-    private lateinit var mSquare: SquareGDX
-    private var mCube: ArrayList<SquareGDX> = ArrayList(4)
+    private lateinit var mTriangle: TriangleGDX
+    private var mCube: ArrayList<LinedSquareGDX> = ArrayList(4)
 
     // vPMatrix is an abbreviation for "Model View Projection Matrix"
     private val vPMatrix = FloatArray(16)
@@ -21,8 +23,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     // rotation
     private val rotationMatrix = FloatArray(16)
-    private var rotationX: Float = 0f
-    private var rotationY: Float = 0f
+    var rotationX: Float = 0f
+    var rotationY: Float = 0f
 
     fun rotateObject(angleX: Float, angleY: Float) {
         rotationX += angleX
@@ -36,8 +38,9 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // TODO: Change if needed
         // initialize object
+        mTriangle = TriangleGDX()
         mCube.add( // front
-            SquareGDX(floatArrayOf(
+            LinedSquareGDX(floatArrayOf(
                 -0.5f,  0.5f, 0.5f,      // top left
                 -0.5f, -0.5f, 0.5f,      // bottom left
                 0.5f, -0.5f, 0.5f,       // bottom right
@@ -46,7 +49,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         )
 
         mCube.add( // left
-            SquareGDX(floatArrayOf(
+            LinedSquareGDX(floatArrayOf(
                 -0.5f,  0.5f, -0.5f,      // top left
                 -0.5f, -0.5f, -0.5f,      // bottom left
                 -0.5f, -0.5f, 0.5f,       // bottom right
@@ -55,7 +58,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         )
 
         mCube.add( // back
-            SquareGDX(floatArrayOf(
+            LinedSquareGDX(floatArrayOf(
                 -0.5f,  0.5f, -0.5f,      // top left
                 -0.5f, -0.5f, -0.5f,      // bottom left
                 0.5f, -0.5f, -0.5f,       // bottom right
@@ -64,7 +67,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         )
 
         mCube.add( // right
-            SquareGDX(floatArrayOf(
+            LinedSquareGDX(floatArrayOf(
                 0.5f,  0.5f, 0.5f,      // top left
                 0.5f, -0.5f, 0.5f,      // bottom left
                 0.5f, -0.5f, -0.5f,     // bottom right
@@ -100,8 +103,12 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
 
         // TODO: Change if needed
-        for (square in mCube) {
-            square.draw(scratch)
+        if (shape == 0) {
+            mTriangle.draw(scratch)
+        } else {
+            for (linedSquare in mCube) {
+                linedSquare.draw(scratch)
+            }
         }
     }
 
